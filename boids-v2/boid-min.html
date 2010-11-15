@@ -1,0 +1,5 @@
+<body><canvas id='c'></canvas></body><script>
+var q=[[],[]],r=document.getElementById("c"),A=r.getContext("2d"),B=Math.random,C=Math.abs,E,F,G=B(),H=q.length,I=["#FF0","#fff"],J=[],K;r.height=r.width=700;for(y=H;y--;){K=q[y];for(x=300;x--;){E=B()*x;F=B()*x;K.push([E,F,G,G])}}setInterval(L,50);
+function L(){var s=0,t=0,u=0,v=0,b,l,g,h,i,n,w,z,f,o,d,c,a,e,p,j,k,m,D;A.fillStyle="#003";A.fillRect(0,0,700,700);for(m=H;m--;){k=q[m];A.fillStyle=I[m];for(d=j=k.length;d--;){f=k[d];s+=f[0];t+=f[1];u+=f[2];v+=f[3]}s/=j;t/=j;u/=j;v/=j;e=J[!m*1]||[0,0,0,0];a=J[m]=[s,t,u,v];b=e[0];l=e[1];g=a[0];h=a[1];f=(b-l)/300;d=(g-h)/300;c=o=0;if(C(b-g)<99&&C(l-h)<99){c=-(b-g)/9;o=-(l-h)/9}b=(e[2]-a[2])/8;a=(e[3]-a[3])/8;f=(f+c+b)/9;o=(d+o+a)/9;for(d=j;d--;){b=k[d];c=b[0];a=b[1];e=b[2];p=b[3];b=(s-c)/100;l=(t-a)/
+100;g=h=w=z=0;for(i=j;i--;)if(i!=d){n=k[i][0];D=k[i][1];if(C(n-c)<30&&C(D-a)<30){g=(g-(n-c))/30;h=(h-(D-a))/30}}i=(u-e)/8;n=(v-p)/8;if(c<10)w=10;if(c>690)w=-10;if(a<10)z=10;if(a>690)z=-10;e+=(b+g+i+w+f)/9;p+=(l+h+n+z+o)/9;c+=e;a+=p;A.fillRect(c,a,2,2);k[d]=[c,a,e,p]}}};
+</script>

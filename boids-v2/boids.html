@@ -1,0 +1,122 @@
+<body><canvas id='c'></canvas></body><script>
+var q = [[],[]],c = document.getElementById('c'),t = c.getContext('2d'),r=Math.random,i=Math.abs, px, py,vel=r(), qlen = q.length,fills = ["#FF0","#fff"],flockCalc = [],flock;
+c.height=c.width=700;
+for (y = qlen; y--; ){
+	flock = q[y];
+	for (x = 300; x--; ){
+		px = r()*x;
+		py = r()*x;
+		flock.push([px,py,vel,vel]);//qx,qy,velx,vely
+	}
+}
+
+setInterval(p, 50);
+
+function p(){
+	var cX=0,cY=0,velX=0,velY=0,rule1x,rule1y,rule2x,rule2y,rule3x,rule3y,rule4x,rule4y,rule5x,rule5y,boid,x,y,boid2,boidx,boidy,boidvx,boidvy,thing,len,flock, flockcounter, thisMass, otherMass, mRule1x,mRule1y, mRule2x,mRule2y, mRule3x,mRule3y, omx, omy, tmx, tmy, omvx, omvy, tmvx, tmvy,thing1,thing2;
+
+	t.fillStyle = "#003";
+	t.fillRect(0,0,700,700);
+
+	for (flockcounter = qlen; flockcounter--; ){
+		flock = q[flockcounter];
+		t.fillStyle = fills[flockcounter];
+		len = flock.length;
+		//get center of mass
+		for (x = len; x--; ){
+			thing = flock[x];
+			cX += thing[0];
+			cY += thing[1];
+			velX += thing[2];
+			velY += thing[3];
+		}
+		cX /= len;
+		cY /= len;
+		velX /= len;
+		velY /= len;
+	
+		otherMass = flockCalc[!flockcounter*1] || [0,0,0,0];
+		thisMass = flockCalc[flockcounter] = [cX,cY,velX,velY];
+		
+		omx = otherMass[0];
+		omy = otherMass[1];
+		tmx = thisMass[0];
+		tmy = thisMass[1];
+	
+		//move toward the other flock
+		mRule1x = (omx - omy) / 300;
+		mRule1y = (tmx - tmy) / 300;
+		
+		//move away from the other flock if too close
+		mRule2x = mRule2y = 0;
+		
+		if ((i(omx - tmx) < 99) && (i(omy - tmy) < 99)){
+			mRule2x = -(omx - tmx)/9;
+			mRule2y = -(omy - tmy)/9;
+		}
+		
+		//match velocity with the other flock
+		mRule3x = (otherMass[2] - thisMass[2]) / 8;
+		mRule3y = (otherMass[3] - thisMass[3]) / 8;
+		
+		//velocity adjustment
+		rule5x = (mRule1x + mRule2x + mRule3x)/9;
+		rule5y = (mRule1y + mRule2y + mRule3y)/9;
+
+		for (x = len; x--; ){
+			boid = flock[x];
+			boidx = boid[0];
+			boidy = boid[1];
+			boidvx = boid[2];
+			boidvy = boid[3];
+			//move toward center of mass
+
+			rule1x = (cX - boidx) / 100;
+			rule1y = (cY - boidy) / 100;
+		
+			//move away from other boids
+			rule2x = rule2y = rule4x = rule4y = 0;
+			for (y = len; y--; ){
+				if (y != x){
+					thing1 = flock[y][0];
+					thing2 = flock[y][1];
+					if ((i(thing1 - boidx) < 30) && (i(thing2 - boidy) < 30)){
+						rule2x = (rule2x - (thing1 - boidx))/30;
+						rule2y = (rule2y- (thing2 - boidy))/30;
+					}
+				}
+			}
+
+			//adjust velocity
+			rule3x = (velX - boidvx) / 8;
+			rule3y = (velY - boidvy) / 8;
+		
+			//fix if out-of-bounds
+			if (boidx < 10)
+				rule4x = 10;
+		
+			if (boidx > 690)
+				rule4x = -10;
+		
+			if (boidy < 10)
+				rule4y = 10;
+		
+			if (boidy > 690)
+				rule4y = -10;
+		
+			//alter velocity from rules
+			boidvx = boidvx + (rule1x + rule2x + rule3x + rule4x + rule5x)/9;
+			boidvy = boidvy + (rule1y + rule2y + rule3y + rule4y + rule5y)/9;
+		
+			//alter position from rules
+			boidx = boidx + boidvx;
+			boidy = boidy + boidvy;
+		
+			//draw boid
+			t.fillRect(boidx,boidy,2,2);
+			//save new position and velocity
+			flock[x] = [boidx,boidy,boidvx,boidvy];	
+		}
+	}
+}
+</script>
