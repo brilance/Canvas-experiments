@@ -1,0 +1,90 @@
+<body><canvas id='a' height='550' width='550'></canvas></body><script>
+var q = [],c = document.getElementById('a'),t = c.getContext('2d'),r=Math.random,i=Math.abs,x, px, py;
+
+for (x = 500; x--; ){
+	px = 100 + r()*300;
+	py = 100 + r()*300;
+	t.fillRect(px,py,2,2);
+	q.push([px,py,0,0]);//qx,qy,velx,vely,velspeed
+}
+
+setInterval(p, 50);
+
+function p(){
+	var cX=0,cY=0,velX=0,velY=0,rule1,rule2,rule3,rule4,boid,x,y,boid2,boidx,boidy,boidvx,boidvy,thing,len= q.length,thirty=30,ten=10;
+	//overwrite c with a big white rectangle
+	t.fillStyle = "#adf";
+	t.fillRect(0,0,550,550);
+	
+	t.fillStyle = "#123";
+	//get center of mass
+	for (x = len; x--; ){
+		thing = q[x];
+		cX += thing[0];
+		cY += thing[1];
+		velX += thing[2];
+		velY += thing[3];
+	}
+	cX /= len;
+	cY /= len;
+	velX /= len;
+	velY /= len;
+	
+	for (x = len; x--; ){
+		boid = q[x];
+		boidx = boid[0];
+		boidy = boid[1];
+		boidvx = boid[2];
+		boidvy = boid[3];
+		//move toward center of mass
+		rule1 = [0,0];
+		rule1[0] = (cX - boidx) / 100;
+		rule1[1] = (cY - boidy) / 100;
+		
+		//move away from other boids
+		rule2 = [0,0];
+		for (y = len; y--; ){
+			if (y != x){
+				boid2 = q[y];
+				if ((i(boid2[0] - boidx) < thirty) && (i(boid2[1] - boidy) < thirty)){
+					rule2[0] = (rule2[0] - (boid2[0] - boidx))/thirty;
+					rule2[1] = (rule2[1]- (boid2[1] - boidy))/thirty;
+				}
+			}
+		}
+
+		//adjust velocity
+		rule3 = [0,0];
+		rule3[0] = (velX - boidvx) / 8;
+		rule3[1] = (velY - boidvy) / 8;
+		
+		rule4 = [0,0];
+		//fix if out-of-bounds
+		if (boidx < ten)
+			rule4[0] = ten;
+		
+		else if (boidx > 540)
+			rule4[0] = -ten;
+		
+		if (boidy < ten)
+			rule4[1] = ten;
+		
+		else if (boidy > 540)
+			rule4[1] = -ten;
+		
+		
+		//alter velocity from rules
+		boidvx = boidvx + (rule1[0] + rule2[0] + rule3[0] + rule4[0])/ten;
+		boidvy = boidvy + (rule1[1] + rule2[1] + rule3[1] + rule4[1])/ten;
+		
+		//alter qition from rules
+		boidx = boidx + boidvx;
+		boidy = boidy + boidvy;
+		
+		//draw boid
+		t.fillRect(boidx,boidy,2,2);
+		//save new position and velocity
+		q[x] = [boidx,boidy,boidvx,boidvy];	
+	}
+}
+</script>
