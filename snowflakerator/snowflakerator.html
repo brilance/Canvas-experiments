@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>untitled</title>
+	<!--[if IE]><script src="excanvas.compiled.js"></script><![endif]-->
+	<style type="text/css">
+		#snowflake{
+			position:absolute;
+			top:150px;
+			left:150px;
+			border:1px solid black;
+			cursor:default;
+		}
+		
+		strong{
+			float:left;
+		}
+		
+		.clear{
+			clear:both;
+		}
+		
+		.width, .color{
+			float:left;
+			margin-left:18px;
+			background-color:#000;
+			border:3px solid white;
+			cursor:pointer;
+		}
+		
+		.current{
+			border:3px solid red !important;
+		}
+		
+		#one{
+			width:1px;
+			height:1px;
+		}
+		
+		#two{
+			width:2px;
+			height:2px;
+		}
+		
+		#three{
+			width:3px;
+			height:3px;
+		}
+		
+		#four{
+			width:4px;
+			height:4px;
+		}
+		
+		#five{
+			width:5px;
+			height:5px;
+		}
+		
+		#six{
+			width:6px;
+			height:6px;
+		}
+		
+		#seven{
+			width:7px;
+			height:7px;
+		}
+		
+		#eight{
+			width:8px;
+			height:8px;
+		}
+		
+		#nine{
+			width:9px;
+			height:9px;
+		}
+		
+		#ten{
+			width:10px;
+			height:10px;
+		}
+		
+		.color{
+			width:15px;
+			height:15px;
+		}
+		
+		#black{
+			background-color:#000;
+		}
+		
+		#blue{
+			background-color:#0000FF;
+		}
+		
+		#red{
+			background-color:#FF0000;
+		}
+		
+		#green{
+			background-color:#148f00;
+		}
+		
+		#purple{
+			background-color:#8417ff;
+		}
+		
+		#light-blue{
+			background-color:#aae4ff;
+		}
+		
+		#dark-blue{
+			background-color:#090079;
+		}
+		
+		#green-blue{
+			background-color:#00b398;
+		}
+		
+		#purple-blue{
+			background-color:#4800ff;
+		}
+		
+		#grey{
+			background-color:#ccc;
+		}	
+		
+		#eraser{
+			float:left;
+			margin-left:180px;
+			height:15px;
+			width:90px;
+			border:3px solid black;
+			text-align:center;
+			background-color:#fff;
+		}
+		
+		p{
+			margin-left:150px;
+			margin-top:12px;
+		}
+	</style>
+</head>
+
+<body>
+<h1>The Snowflakerator</h1>
+<strong>Brush size:</strong>
+<div id="one" class="width"></div>
+<div id="two" class="width"></div>
+<div id="three" class="width"></div>
+<div id="four" class="width"></div>
+<div id="five" class="width current"></div>
+<div id="six" class="width"></div>
+<div id="seven" class="width"></div>
+<div id="eight" class="width"></div>
+<div id="nine" class="width"></div>
+<div id="ten" class="width"></div>
+<div class="clear"></div>
+<strong>Brush color:</strong>
+<div id="black" class="color current"></div>
+<div id="blue" class="color"></div>
+<div id="red" class="color"></div>
+<div id="green" class="color"></div>
+<div id="purple" class="color "></div>
+<div id="light-blue" class="color"></div>
+<div id="dark-blue" class="color"></div>
+<div id="green-blue" class="color"></div>
+<div id="purple-blue" class="color"></div>
+<div id="grey" class="color"></div>
+
+<div id="eraser" class="color">eraser</div><div class="clear"></div>
+<p>Click and drag to draw on the canvas:</p>
+<canvas id="snowflake" width="700" height="700"></canvas>  
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	var cTop;
+	var cLeft;
+	var ctx;
+	var divisions = 6;
+	var startingPoint = {};
+	var brushWidth = 5;
+	var brushColor;
+	
+	$(document).ready(function(e){
+		var snowflake = document.getElementById('snowflake');
+		
+		cTop = parseInt($("#snowflake").css('top'));
+		cLeft = parseInt($("#snowflake").css('left'));
+		ctx = snowflake.getContext('2d');
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = "#000";
+		
+		$(snowflake).mousedown(startDrawing).mouseleave(stopDrawing);
+		
+		$(".width").click(function(e){
+			$(".width").removeClass('current');
+			$(this).addClass('current');
+			ctx.lineWidth = parseInt($(this).css('width'));
+		})
+		
+		$(".color").click(function(e){
+			$(".color").removeClass('current');
+			$(this).addClass('current');
+			ctx.strokeStyle = $(this).css('background-color');
+		})
+	});
+	
+	function startDrawing(e){
+		$("#snowflake").mousemove(drawLine);
+		$("#snowflake").mouseup(stopDrawing);
+		startingPoint.left = e.pageX-cLeft;
+		startingPoint.top = e.pageY-cTop;
+		ctx.beginPath();
+	}
+	
+	function drawLine(e){
+		for (var i = 0; i < divisions; i++){
+			ctx.moveTo(startingPoint.left, startingPoint.top);
+			var cPosX = e.pageX - cLeft;
+			var cPosY = e.pageY - cTop;
+			ctx.lineTo(cPosX, cPosY);
+			ctx.stroke();
+			ctx.translate(350,350);
+			ctx.rotate(Math.PI*2 / divisions);
+			ctx.translate(-350,-350);
+		}
+		startingPoint.left = cPosX;
+		startingPoint.top = cPosY;
+	}
+	
+	function stopDrawing(e){
+		console.log('here');
+		ctx.closePath();
+		$("#snowflake").unbind('mousemove');
+		$("#snowflake").unbind('mouseup');
+	}
+
+</script>
+</body>
+</html>
